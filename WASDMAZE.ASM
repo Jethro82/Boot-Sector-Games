@@ -34,7 +34,7 @@ FreeGrid:
 	FG2:
 		mov byte [es:bp],' ' ;clear grid pattern for both x,y as odd numbered cell
 		call random3bits
-		cmp dl,1 
+		cmp dl,1
 		jg checkdown
 			mov byte [es:bp+2],' ' ;one in eight chance of deleted next right space in grid
 		checkdown:
@@ -87,7 +87,6 @@ NewRandomSeed1:
 				inc ah
 	AdvanceSeed1:
 		cmp ax,1f14h
-jz WriteSecondPath
 jnz NewRandomSeed1
 
 
@@ -127,14 +126,12 @@ NewRandomSeed2:
 				inc ah
 	AdvanceSeed2:
 		cmp ax,14h
-jz InitRD
 jnz NewRandomSeed2
 
 initrd:
 
 
-mov bp,322
-mov word [es:bp],5700h+'G'
+mov word [es:322],5700h+'G'
 mov bp,6846
 mov WORD [es:bp],301h
 push bp
@@ -208,13 +205,13 @@ jmp GamePlayLoop
 EndGame1:
 mov ax,3
 int 10h
-xor si,si
-mov bx,offset Victory
+xor di,di
+mov si,offset Victory
 cmp dx,364
 jnz EndGame
-	mov bx,offset Defeat
+	mov si,offset Defeat
 	call StringWrite
-	mov bx,offset NewGame
+	mov si,offset NewGame
 EndGame:
 call stringwrite
 NewGameKey:
@@ -227,16 +224,6 @@ NewGame3ByteJump:
 jmp StartMazeWrite
 
 
-Random3Bits:
-	shr cx,3
-	jnz Next3bits
-		inc byte [7900]
-		mov si,[7900]
-		mov cx,[si]
-	Next3bits:
-	mov dl,cl
-	and dl,7
-ret
 
 GridCalcAndClear2:
 	mov Dx,482
@@ -257,20 +244,31 @@ GridCalcAndClear:
 Ret
 
 StringWrite:
-		mov al,[bx]
-		mov [es:si],al
-		inc si
-		inc si
-		inc bx
-		cmp byte [bx],0
-	jnz StringWrite
+	CLD
+	StringWrite2:
+		movsb
+		inc di
+		cmp byte [si],0
+	jnz StringWrite2
 Ret
+defeat:
+db 'Loss',0
+
+org 32206
+Random3Bits:
+	shr cx,3
+	jnz Next3bits
+		inc byte [7900]
+		mov si,[7900]
+		mov cx,[si]
+	Next3bits:
+	mov dl,cl
+	and dl,7
+ret
 
 TimeLabel:
 Victory:
 db 'WIN'
 NewGame:
 db ':n - New Game',0
-defeat:
-db 'Loss',0
 
