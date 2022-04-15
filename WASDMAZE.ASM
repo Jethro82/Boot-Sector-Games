@@ -273,4 +273,4 @@ NewGame:
 db ':n - New Game',0
 
 org 7dfeh
-db 55,0AAh
+db 55h,0AAh
