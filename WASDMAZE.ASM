@@ -272,3 +272,5 @@ db 'WIN'
 NewGame:
 db ':n - New Game',0
 
+org 7dfeh
+db 55,0AAh
